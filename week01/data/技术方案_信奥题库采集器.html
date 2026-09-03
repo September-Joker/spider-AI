@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>信奥题库采集器 · 技术方案与学习拆解</title>
+<style>
+  :root{
+    --bg:#F7F8FF; --primary:#5B6CFF; --primary-dark:#3D4BDB;
+    --yellow:#FFD166; --pink:#FF7AB6; --green:#55C59D;
+    --ink:#1F2433; --ink-soft:#5A6178; --card:#FFFFFF; --line:#E6E9F8;
+    --radius:16px; --shadow:0 4px 18px rgba(91,108,255,.08);
+    --code-bg:#1F2433; --code-ink:#E6E9F8;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Nunito",Inter,sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.8;-webkit-font-smoothing:antialiased}
+  a{color:var(--primary-dark)}
+  nav.toc{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);
+    backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  nav.toc .inner{max-width:1000px;margin:0 auto;padding:10px 20px;display:flex;
+    flex-wrap:wrap;gap:6px 16px;align-items:center;font-size:14px}
+  nav.toc .brand{font-weight:800;color:var(--primary);margin-right:auto;white-space:nowrap}
+  nav.toc a{color:var(--ink-soft);text-decoration:none}
+  nav.toc a:hover{color:var(--primary)}
+  main{max-width:1000px;margin:0 auto;padding:0 20px 80px}
+  header.hero{padding:48px 0 28px}
+  .hero .tagline{display:inline-block;background:var(--green);color:#fff;font-weight:700;
+    font-size:13px;padding:5px 14px;border-radius:999px;margin-bottom:16px}
+  header.hero h1{font-size:clamp(26px,4.2vw,38px);font-weight:900;line-height:1.35;margin-bottom:14px}
+  header.hero h1 .hl{color:var(--primary)}
+  header.hero p.lead{font-size:16.5px;color:var(--ink-soft);max-width:760px}
+  .hero-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+  .chip{background:var(--card);border:1px solid var(--line);border-radius:12px;
+    padding:8px 14px;font-size:13.5px;font-weight:600;box-shadow:var(--shadow)}
+  .chip b{color:var(--primary)}
+  section{margin-top:48px}
+  h2.sec{font-size:clamp(21px,2.8vw,26px);font-weight:900;margin-bottom:8px;
+    display:flex;align-items:center;gap:12px}
+  h2.sec .num{flex:none;width:36px;height:36px;border-radius:11px;background:var(--primary);
+    color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:16px}
+  .sec-desc{color:var(--ink-soft);margin-bottom:20px;max-width:780px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+    padding:22px;box-shadow:var(--shadow);margin-bottom:16px}
+  .card h3{font-size:16.5px;margin-bottom:10px}
+  code.inline{background:#EEF0FF;color:var(--primary-dark);padding:2px 7px;border-radius:6px;
+    font-family:"SF Mono",Consolas,Menlo,monospace;font-size:.88em}
+  pre.code{background:var(--code-bg);color:var(--code-ink);border-radius:12px;padding:16px 18px;
+    overflow-x:auto;font-family:"SF Mono",Consolas,Menlo,monospace;font-size:13.5px;line-height:1.7;
+    margin:10px 0}
+  pre.code .c{color:#8B93B0}
+  pre.code .g{color:#7FE0B8}
+  pre.code .y{color:#FFD166}
+  /* 文件树表 */
+  table{width:100%;border-collapse:collapse;font-size:14px;background:var(--card);
+    border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  th,td{text-align:left;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:#EEF0FF;color:var(--primary-dark);font-weight:800;white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+  td .fn{font-family:"SF Mono",Consolas,Menlo,monospace;font-size:13px;color:var(--primary-dark);
+    font-weight:700;white-space:nowrap}
+  .table-wrap{overflow-x:auto;border-radius:12px;box-shadow:var(--shadow)}
+  /* 架构流程 */
+  .flow{display:flex;flex-direction:column;gap:0;align-items:stretch;margin:8px 0}
+  .flow .node{background:var(--card);border:1.5px solid var(--primary);border-radius:12px;
+    padding:12px 16px;text-align:center;font-weight:700;font-size:14.5px;box-shadow:var(--shadow)}
+  .flow .node small{display:block;font-weight:500;color:var(--ink-soft);font-size:12.5px;margin-top:2px}
+  .flow .arrow{text-align:center;color:var(--primary);font-size:20px;line-height:1.4;font-weight:900}
+  .flow .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .flow .node.n-src{border-color:var(--green)}
+  .flow .node.n-llm{border-color:var(--pink)}
+  .flow .node.n-db{border-color:#E0A800}
+  /* 概念卡 */
+  .concepts{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .concept{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px;
+    box-shadow:var(--shadow);border-top:4px solid var(--primary)}
+  .concept:nth-child(2){border-top-color:var(--pink)}
+  .concept:nth-child(3){border-top-color:var(--yellow)}
+  .concept:nth-child(4){border-top-color:var(--green)}
+  .concept:nth-child(5){border-top-color:var(--primary)}
+  .concept:nth-child(6){border-top-color:var(--pink)}
+  .concept b{display:block;margin-bottom:4px;font-size:15.5px}
+  .concept span{font-size:14px;color:var(--ink-soft)}
+  .concept code{font-family:"SF Mono",Consolas,monospace;font-size:.85em;color:var(--primary-dark)}
+  /* 周计划时间轴 */
+  .weeks{position:relative;margin-top:8px}
+  .weeks::before{content:"";position:absolute;left:17px;top:10px;bottom:10px;width:3px;
+    background:linear-gradient(var(--primary),var(--green));border-radius:3px}
+  .wk{position:relative;padding:0 0 20px 52px}
+  .wk:last-child{padding-bottom:0}
+  .wk .dot{position:absolute;left:4px;top:2px;width:30px;height:30px;border-radius:50%;
+    background:var(--card);border:3px solid var(--primary);color:var(--primary);
+    display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;z-index:2}
+  .wk .wkh{font-size:15.5px;margin-bottom:3px}
+  .wk p{font-size:14px;color:var(--ink-soft)}
+  .wk p code{font-family:"SF Mono",Consolas,monospace;font-size:.85em;color:var(--primary-dark);
+    background:#EEF0FF;padding:1px 6px;border-radius:5px}
+  .note{background:#FFF9E8;border:1px solid #F3E2A8;border-radius:12px;padding:14px 18px;
+    font-size:14px;margin-top:14px}
+  .note b{color:#8A6D00}
+  ul.plain{padding-left:20px;font-size:14.5px;color:var(--ink-soft)}
+  ul.plain li{margin-bottom:6px}
+  a:focus-visible{outline:3px solid var(--primary);outline-offset:2px;border-radius:4px}
+  @media (max-width:760px){
+    .concepts{grid-template-columns:1fr}
+    .flow .row{grid-template-columns:1fr}
+    .weeks::before{left:14px}
+    .wk{padding-left:44px}
+  }
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+  @media print{
+    nav.toc{position:static}
+    body{background:#fff}
+    .card,.concept,.table-wrap{box-shadow:none;break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+
+<nav class="toc">
+  <div class="inner">
+    <span class="brand">🛠 信奥题库采集器</span>
+    <a href="#quick">快速运行</a>
+    <a href="#structure">文件结构</a>
+    <a href="#flow">数据流</a>
+    <a href="#concepts">6 个概念</a>
+    <a href="#weeks">六周计划</a>
+    <a href="#extend">扩展路线</a>
+    <a href="#rules">合规</a>
+  </div>
+</nav>
+
+<main>
+
+<header class="hero">
+  <span class="tagline">✅ 代码已实测可运行 · 附完整项目包</span>
+  <h1>信奥题库采集器：<br><span class="hl">你的第一个工程化 Python 项目</span></h1>
+  <p class="lead">
+    这个项目不是练习语法的 demo，而是按真实生产方式组织的：分层架构、限速重试、数据清洗、
+    数据库去重、大模型标注。跑通它，你就把 Q1 要学的爬虫工程化和 LLM API 两大块都过了一遍，
+    同时手里有了一个能直接放进 GitHub 的作品集。
+  </p>
+  <div class="hero-meta">
+    <span class="chip">📦 依赖只有 <b>requests</b>，零数据库安装</span>
+    <span class="chip">🗄 数据存 <b>SQLite</b> 单文件</span>
+    <span class="chip">🤖 LLM 标注<b>可选</b>，不配 Key 也能跑</span>
+    <span class="chip">📚 数据源 <b>Codeforces + AtCoder</b> 官方/社区公开 API</span>
+  </div>
+</header>
+
+<!-- 快速运行 -->
+<section id="quick">
+  <h2 class="sec"><span class="num">1</span>五分钟跑起来</h2>
+  <p class="sec-desc">解压项目包后，在 <code class="inline">oi_collector</code> 目录里依次执行：</p>
+  <div class="card">
+<pre class="code"><span class="c"># 1. 安装依赖（建议先建虚拟环境）</span>
+pip install -r requirements.txt
+
+<span class="c"># 2. 采集 Codeforces 前 20 道题（先小量，礼貌爬取）</span>
+python main.py fetch --source codeforces --limit 20
+
+<span class="c"># 3. 再采 AtCoder</span>
+python main.py fetch --source atcoder --limit 20
+
+<span class="c"># 4. 看看库里有什么 / 统计</span>
+python main.py list --limit 10
+python main.py stats
+
+<span class="c"># 5.（可选）配大模型 Key 后，让 AI 标注知识点和适合年级</span>
+<span class="y">set LLM_API_KEY=sk-xxx</span>        <span class="c"># Windows</span>
+<span class="c"># export LLM_API_KEY="sk-xxx"     # Mac/Linux</span>
+python main.py tag --limit 10</pre>
+    <div class="note">
+      <b>运行预期：</b>采集时你会看到日志输出，可能出现个别「请求失败→重试」的警告后仍然成功——
+      这就是<b>指数退避重试</b>在真实网络环境下工作的样子，不是 bug。重复运行同一采集命令，
+      你会看到「新增 0，更新 N」，说明<b>去重</b>生效了。
+    </div>
+  </div>
+</section>
+
+<!-- 文件结构 -->
+<section id="structure">
+  <h2 class="sec"><span class="num">2</span>文件结构与每层职责</h2>
+  <p class="sec-desc">生产项目和课堂脚本的第一个区别：代码分层。每一层只干一件事，换网站、换数据库都不用动其他层。</p>
+  <div class="table-wrap">
+  <table>
+    <caption style="text-align:left;padding:10px 14px;font-weight:800;color:var(--primary-dark)">项目文件与职责对照表</caption>
+    <thead><tr><th>文件</th><th>职责</th><th>你要从中学到什么</th></tr></thead>
+    <tbody>
+      <tr><td class="fn">main.py</td><td>命令行入口，fetch / tag / list / stats 四个子命令</td><td>argparse 参数解析、程序入口组织</td></tr>
+      <tr><td class="fn">config.py</td><td>全局配置：限速秒数、数据库路径、LLM Key</td><td>配置与代码分离；环境变量读取密钥（不写死在代码里）</td></tr>
+      <tr><td class="fn">collector/base.py</td><td>采集基类：统一处理限速、请求头、重试</td><td><b>本项目最值钱的一个文件</b>：requests.Session、指数退避、面向对象继承</td></tr>
+      <tr><td class="fn">collector/codeforces.py</td><td>Codeforces 官方 API 采集</td><td>调用 JSON API、字段适配（_normalize）</td></tr>
+      <tr><td class="fn">collector/atcoder.py</td><td>AtCoder Problems 社区 API 采集</td><td>对比两个字段结构完全不同的源，体会适配层的意义</td></tr>
+      <tr><td class="fn">collector/luogu.py</td><td>洛谷采集（默认未启用，有 WAF）</td><td>留给你的 Playwright 练习目标；防御性解析写法</td></tr>
+      <tr><td class="fn">pipeline/clean.py</td><td>数据清洗：去空格、标签标准化、丢弃坏数据</td><td>「永远不要相信外部数据」的工程习惯</td></tr>
+      <tr><td class="fn">pipeline/storage.py</td><td>SQLite 建表、upsert 去重、查询统计</td><td>SQL 建表、UNIQUE 约束、INSERT/UPDATE、upsert 套路</td></tr>
+      <tr><td class="fn">llm/tagger.py</td><td>调大模型 API，输出 JSON 知识点标签 + 建议年级</td><td>OpenAI 兼容接口调用、Prompt 设计、结构化 JSON 输出、失败降级</td></tr>
+    </tbody>
+  </table>
+  </div>
+</section>
+
+<!-- 数据流 -->
+<section id="flow">
+  <h2 class="sec"><span class="num">3</span>数据怎么流动</h2>
+  <p class="sec-desc">理解这条管线，你就理解了 90% 的数据类项目——以后换数据、换 AI 功能，都是在这条线上加节点。</p>
+  <div class="card">
+    <div class="flow">
+      <div class="row">
+        <div class="node n-src">Codeforces API<small>官方公开 JSON</small></div>
+        <div class="node n-src">AtCoder Problems API<small>社区公开 JSON</small></div>
+      </div>
+      <div class="arrow">↓</div>
+      <div class="node">collector 采集层<small>base.py 统一限速 2s/次 · 失败指数退避重试 2s→4s→8s · UA 标识身份</small></div>
+      <div class="arrow">↓</div>
+      <div class="node">clean 清洗层<small>去空格 · 标签统一成列表 · 缺关键字段的记录丢弃</small></div>
+      <div class="arrow">↓</div>
+      <div class="node n-db">SQLite 数据库（data/oi.db）<small>UNIQUE(来源,题号) 约束 · upsert：存在就更新，不存在就插入，天然去重</small></div>
+      <div class="arrow">↓</div>
+      <div class="node n-llm">llm.tagger 大模型增强<small>题目信息 → Prompt → DeepSeek/OpenAI → 解析 JSON → 写回知识点标签 + 建议年级</small></div>
+      <div class="arrow">↓</div>
+      <div class="node">命令行查询 / 未来的 Web 界面 / RAG 备课机器人（Q2）</div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 个概念 -->
+<section id="concepts">
+  <h2 class="sec"><span class="num">4</span>边用边学：6 个核心工程概念</h2>
+  <p class="sec-desc">不用先啃书。跑通项目后，带着问题回到对应文件看代码，每个概念都有真实上下文。</p>
+  <div class="concepts">
+    <div class="concept"><b>① 分层与适配</b>
+      <span>每个网站字段命名都不同（<code>name</code> vs <code>title</code>），<code>_normalize()</code> 把它们统一成内部格式。
+      以后加牛客，只写一个新文件，其他层一行不改。</span></div>
+    <div class="concept"><b>② 礼貌爬取与合规</b>
+      <span><code>REQUEST_DELAY=2</code> 秒限速、UA 写明用途、遵守 robots.txt。
+      这不是可选项——这是你作为工程师的职业底线。</span></div>
+    <div class="concept"><b>③ 面向失败设计</b>
+      <span>网络会超时、接口会 500、结构会变。重试机制和防御性解析（<code>.get()</code> 而非 <code>[]</code> 取值）
+      让程序「坏一部分也不崩」。</span></div>
+    <div class="concept"><b>④ upsert 去重</b>
+      <span>靠数据库 <code>UNIQUE</code> 约束 + 插入冲突转更新，跑 100 次也不会出现重复题目。
+      这是所有爬虫数据落地的标准套路。</span></div>
+    <div class="concept"><b>⑤ LLM 结构化输出</b>
+      <span>Prompt 里明确要求「只输出 JSON」，程序再 <code>json.loads</code> 解析。
+      AI 功能的核心不是调 API，是把模型输出变成程序能用的结构化数据。</span></div>
+    <div class="concept"><b>⑥ 增强而非依赖</b>
+      <span>不配 Key 采集照常工作；LLM 调用失败只警告不中断。
+      AI 是锦上添花，系统的主链路永远要能独立运行。</span></div>
+  </div>
+</section>
+
+<!-- 六周计划 -->
+<section id="weeks">
+  <h2 class="sec"><span class="num">5</span>六周拆解（对应路线图 Q1）</h2>
+  <p class="sec-desc">每周 8–10 小时。重点不是读代码，是<b>改代码</b>——每个改动都 commit 到 GitHub。</p>
+  <div class="card">
+    <div class="weeks">
+      <div class="wk"><span class="dot">1</span><h3 class="wkh">跑通 + 读懂</h3>
+        <p>安装运行四个命令；对照文件结构表，把每个文件通读一遍，在不懂的行写注释问我。注册 GitHub，建仓库把代码推上去（<code>.gitignore</code> 忽略 data/oi.db）。</p></div>
+      <div class="wk"><span class="dot">2</span><h4>改造清洗与存储</h3>
+        <p>给 <code>clean.py</code> 加规则：标题含「测试/广告」的丢弃；给 <code>storage.py</code> 加一个
+        <code>search(keyword)</code> 函数按标题关键词查题，并接到 <code>main.py</code> 新命令 <code>find</code>。</p></div>
+      <div class="wk"><span class="dot">3</span><h4>加第一个新数据源</h3>
+        <p>照着 <code>atcoder.py</code>，新写一个采集器（建议 AtCoder 难度接口 problem-models.json，把难度补全），
+        注册进 <code>FETCHERS</code>。这一周结束你就有了「扩展系统」的能力。</p></div>
+      <div class="wk"><span class="dot">4</span><h4>接入 LLM</h3>
+        <p>申请 DeepSeek API Key（充值 10 元够用很久），跑通 <code>tag</code>。
+        然后改 Prompt：让模型额外输出「这道题适合讲什么知识点」「推荐给几年级」，观察输出质量差异。</p></div>
+      <div class="wk"><span class="dot">5</span><h4>导出教学产物</h3>
+        <p>加 <code>export</code> 命令：按知识点/难度筛 10 道题，生成 Markdown 格式的「本周练习卷」。
+        <b>打印出来，真的发给你的学生用一次。</b></p></div>
+      <div class="wk"><span class="dot">6</span><h4>异步提速 + 定时</h3>
+        <p>把 <code>base.py</code> 的同步 requests 改成 <code>aiohttp + asyncio</code>（配合信号量控制并发，
+        别超过 3）；再用 Windows 任务计划程序设成每周自动跑。写一篇 README 记录踩坑——这就是你的第一篇技术内容。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 扩展路线 -->
+<section id="extend">
+  <h2 class="sec"><span class="num">6</span>之后的扩展路线（通向 Q2）</h2>
+  <div class="card">
+    <ul class="plain">
+      <li><b>Playwright 解锁洛谷</b>：浏览器渲染 + 等待动态内容 + Cookie，把 <code>luogu.py</code> 启用——这是你第一次接触反爬对抗。</li>
+      <li><b>Streamlit Web 界面</b>：给题库加搜索/筛选页面，100 行代码出一个能用的网站，部署到云服务器。</li>
+      <li><b>通向 Q2 的关键一跃</b>：把题目标题、标签、你的教案一起喂进向量库（RAG），实现「我下周想讲贪心，给我 10 道难度递进的题+讲解思路」——这就是 AI 备课机器人的内核。</li>
+    </ul>
+    <div class="note">
+      <b>作品集意识：</b>每个阶段完成后，在 GitHub README 里加一段「我做了什么、解决了什么问题、踩了什么坑」。
+      面试官和合作方看的不是代码量，是你<b>解决问题的完整叙事</b>。
+    </div>
+  </div>
+</section>
+
+<!-- 合规 -->
+<section id="rules">
+  <h2 class="sec"><span class="num">7</span>合规红线（务必遵守）</h2>
+  <div class="card">
+    <ul class="plain">
+      <li>只采集公开数据，尊重每个网站的 robots.txt 和服务条款；Codeforces / AtCoder Problems 均提供公开接口，优先使用接口而非爬页面。</li>
+      <li>限速不低于 2 秒/次，并发不超过 3；服务器返回错误或封禁信号时立即停止。</li>
+      <li>不采集、不存储任何个人信息；抓取的数据仅用于个人教学与学习，不公开传播原始数据集。</li>
+      <li>不绕过付费墙、不破解需要登录的内容；洛谷等有防护的站点，练习时控制频率、仅取必要数据。</li>
+      <li>LLM 标注结果作为教学参考，课程判断以教师本人为准。</li>
+    </ul>
+  </div>
+</section>
+
+</main>
+<script>
+document.querySelectorAll('nav.toc a[href^="#"]').forEach(function(a){
+  a.addEventListener('click', function(e){
+    var t = document.querySelector(a.getAttribute('href'));
+    if(t){ e.preventDefault(); t.scrollIntoView({behavior:'smooth', block:'start'}); }
+  });
+});
+</script>
+</body>
+</html>

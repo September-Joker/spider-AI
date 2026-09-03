@@ -1,0 +1,1485 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Miracle · 12 个月知识点细化手册</title>
+<style>
+:root{
+  --bg:#F7F8FF; --card:#FFFFFF; --ink:#1F2433; --ink-2:#4A4F63; --ink-3:#7A7F93;
+  --line:#E7E9F5; --primary:#5B6CFF; --primary-soft:#EEF0FF;
+  --yellow:#FFD166; --pink:#FF7AB6; --green:#55C59D; --purple:#A78BFA; --orange:#F97316;
+  --shadow:0 2px 8px rgba(31,36,51,.06); --shadow-lg:0 12px 32px rgba(31,36,51,.10);
+  --radius:16px; --radius-sm:10px; --radius-xs:6px;
+  --font:"Inter","Nunito","Avenir Rounded","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--font);
+  font-size:15px; line-height:1.65; -webkit-font-smoothing:antialiased;
+}
+a{color:var(--primary); text-decoration:none}
+a:hover{text-decoration:underline}
+a:focus-visible{outline:2px solid var(--primary); outline-offset:2px; border-radius:4px}
+
+.wrap{max-width:1180px; margin:0 auto; padding:0 24px}
+
+/* ===== Header ===== */
+header.hero{
+  background:linear-gradient(135deg,#5B6CFF 0%,#7B88FF 55%,#FF7AB6 130%);
+  color:#fff; padding:56px 0 72px; position:relative; overflow:hidden;
+}
+header.hero::before{
+  content:""; position:absolute; inset:0;
+  background-image:radial-gradient(circle at 15% 20%,rgba(255,255,255,.18),transparent 40%),
+                   radial-gradient(circle at 85% 70%,rgba(255,209,102,.20),transparent 45%);
+}
+header.hero .wrap{position:relative}
+header.hero .kicker{display:inline-block; background:rgba(255,255,255,.18); padding:6px 14px; border-radius:999px; font-size:13px; letter-spacing:.5px; backdrop-filter:blur(6px)}
+header.hero h1{font-size:clamp(28px,4vw,44px); margin:18px 0 10px; font-weight:800; letter-spacing:-.5px}
+header.hero .sub{font-size:17px; max-width:720px; opacity:.95}
+
+.stats{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:32px}
+.stat{background:rgba(255,255,255,.14); backdrop-filter:blur(8px); border:1px solid rgba(255,255,255,.20); border-radius:var(--radius); padding:16px 18px}
+.stat .n{font-size:28px; font-weight:800; letter-spacing:-.5px}
+.stat .l{font-size:13px; opacity:.9; margin-top:2px}
+@media (max-width:720px){ .stats{grid-template-columns:repeat(2,1fr)} }
+
+/* ===== Sticky nav ===== */
+nav.toc{
+  position:sticky; top:0; z-index:50; background:rgba(247,248,255,.92);
+  backdrop-filter:blur(12px); border-bottom:1px solid var(--line);
+}
+nav.toc .inner{display:flex; gap:8px; padding:12px 0; overflow-x:auto; scrollbar-width:none}
+nav.toc .inner::-webkit-scrollbar{display:none}
+nav.toc a{
+  flex-shrink:0; padding:8px 16px; border-radius:999px; font-size:14px; font-weight:600;
+  color:var(--ink-2); background:var(--card); border:1px solid var(--line);
+  transition:all .2s ease;
+}
+nav.toc a:hover{color:var(--primary); border-color:var(--primary); text-decoration:none}
+nav.toc a.active{background:var(--primary); color:#fff; border-color:var(--primary)}
+
+/* ===== Progress ===== */
+.progress-bar{height:6px; background:var(--line); overflow:hidden}
+.progress-bar > span{display:block; height:100%; background:linear-gradient(90deg,var(--primary),var(--pink)); width:0; transition:width .4s ease}
+
+/* ===== Quarter overview ===== */
+.quarter-overview{padding:48px 0 8px}
+.quarter-overview h2{font-size:24px; margin:0 0 20px; font-weight:800}
+.q-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:16px}
+@media (max-width:960px){ .q-grid{grid-template-columns:repeat(2,1fr)} }
+@media (max-width:520px){ .q-grid{grid-template-columns:1fr} }
+.q-card{
+  background:var(--card); border-radius:var(--radius); padding:20px;
+  border:1px solid var(--line); box-shadow:var(--shadow); position:relative; overflow:hidden;
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.q-card:hover{transform:translateY(-3px); box-shadow:var(--shadow-lg)}
+.q-card::before{content:""; position:absolute; top:0; left:0; width:4px; height:100%; background:var(--q-color,var(--primary))}
+.q-card h3{margin:0 0 6px; font-size:16px; font-weight:700}
+.q-card .role{font-size:12px; color:var(--ink-3); margin-bottom:12px}
+.q-card .proj{font-size:14px; color:var(--ink); font-weight:600; margin-bottom:10px; padding:8px 10px; background:var(--q-bg,var(--primary-soft)); border-radius:var(--radius-sm)}
+.q-card ul{margin:0; padding:0; list-style:none; font-size:13px; color:var(--ink-2)}
+.q-card ul li{padding:3px 0; padding-left:16px; position:relative}
+.q-card ul li::before{content:"✓"; position:absolute; left:0; color:var(--q-color,var(--primary)); font-weight:800}
+
+/* ===== Filter bar ===== */
+.filter-bar{
+  padding:24px 0 12px; display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+}
+.filter-bar .label{font-size:13px; color:var(--ink-3); margin-right:4px}
+.chip{
+  display:inline-flex; align-items:center; gap:6px; padding:5px 12px;
+  font-size:12.5px; font-weight:600; border-radius:999px; cursor:pointer;
+  border:1px solid var(--line); background:var(--card); color:var(--ink-2);
+  transition:all .15s ease; user-select:none;
+}
+.chip .dot{width:8px; height:8px; border-radius:50%; background:var(--c)}
+.chip:hover{border-color:var(--c); color:var(--c)}
+.chip.active{background:var(--c); color:#fff; border-color:var(--c)}
+.chip.active .dot{background:#fff}
+
+/* ===== Month card ===== */
+.months{padding:16px 0 48px; display:flex; flex-direction:column; gap:20px}
+.month{
+  background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+  box-shadow:var(--shadow); overflow:hidden;
+}
+.month > header.m-head{
+  padding:20px 24px; cursor:pointer; display:flex; align-items:center; gap:16px;
+  background:linear-gradient(135deg,var(--m-from,var(--primary-soft)) 0%,transparent 80%);
+  border-bottom:1px solid var(--line);
+}
+.month > header.m-head .num{
+  flex-shrink:0; width:46px; height:46px; border-radius:12px;
+  background:var(--m-color,var(--primary)); color:#fff;
+  display:flex; align-items:center; justify-content:center; font-weight:800; font-size:18px;
+}
+.month > header.m-head .info{flex:1; min-width:0}
+.month > header.m-head .info .title{font-size:18px; font-weight:700; margin:0 0 2px}
+.month > header.m-head .info .theme{font-size:13px; color:var(--ink-3)}
+.month > header.m-head .chev{
+  width:28px; height:28px; border-radius:50%; background:var(--bg);
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  transition:transform .25s ease;
+}
+.month[open] > header.m-head .chev{transform:rotate(180deg)}
+.month > header.m-head .info .tags{margin-top:6px; display:flex; flex-wrap:wrap; gap:5px}
+.month > header.m-head .info .tags span{
+  font-size:11px; padding:2px 8px; border-radius:999px; font-weight:600;
+  background:var(--t-bg); color:var(--t-c);
+}
+
+.month .body{padding:20px 24px 24px}
+
+.weeks{display:grid; grid-template-columns:repeat(2,1fr); gap:14px}
+@media (max-width:760px){ .weeks{grid-template-columns:1fr} }
+
+.week{
+  background:var(--bg); border:1px solid var(--line); border-radius:var(--radius-sm);
+  padding:14px 16px; transition:border-color .15s ease, background .15s ease;
+}
+.week.hidden-by-filter{display:none}
+.week .w-head{display:flex; align-items:baseline; justify-content:space-between; margin-bottom:8px; gap:8px}
+.week .w-head .w-num{font-weight:800; color:var(--m-color,var(--primary)); font-size:13px}
+.week .w-head .w-title{font-size:14px; font-weight:700; flex:1}
+.week .points{display:flex; flex-direction:column; gap:6px; margin:8px 0 10px}
+.week .point{
+  display:flex; gap:8px; font-size:13px; color:var(--ink); line-height:1.5;
+  padding:4px 0;
+}
+.week .point::before{
+  content:""; flex-shrink:0; width:6px; height:6px; border-radius:50%;
+  background:var(--m-color,var(--primary)); margin-top:7px;
+}
+.week .output{
+  margin-top:8px; padding:8px 10px; background:#fff; border-radius:var(--radius-xs);
+  font-size:12.5px; color:var(--ink-2); border-left:3px solid var(--m-color,var(--primary));
+}
+.week .output strong{color:var(--ink); font-weight:700}
+.week .resources{margin-top:8px; display:flex; flex-wrap:wrap; gap:6px; font-size:12px}
+.week .resources a{
+  padding:3px 8px; border-radius:999px; background:#fff; color:var(--ink-2);
+  border:1px solid var(--line);
+}
+.week .resources a:hover{color:var(--primary); border-color:var(--primary); text-decoration:none}
+
+.milestone{
+  margin-top:18px; padding:14px 16px; background:linear-gradient(135deg,#fff 0%,var(--primary-soft) 100%);
+  border-radius:var(--radius-sm); border:1px dashed var(--m-color,var(--primary));
+  display:flex; align-items:flex-start; gap:12px;
+}
+.milestone input[type=checkbox]{
+  flex-shrink:0; width:20px; height:20px; margin-top:2px; accent-color:var(--m-color,var(--primary));
+  cursor:pointer;
+}
+.milestone label{cursor:pointer; font-size:14px; font-weight:600; color:var(--ink)}
+.milestone label small{display:block; font-weight:400; color:var(--ink-3); font-size:12px; margin-top:2px}
+
+/* ===== Footer sections ===== */
+section.knowledge-map, section.resources, section.pitfalls{
+  padding:36px 0; border-top:1px solid var(--line);
+}
+section h2{font-size:22px; font-weight:800; margin:0 0 18px}
+.k-groups{display:grid; grid-template-columns:repeat(3,1fr); gap:16px}
+@media (max-width:860px){ .k-groups{grid-template-columns:repeat(2,1fr)} }
+@media (max-width:520px){ .k-groups{grid-template-columns:1fr} }
+.k-group{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:18px; box-shadow:var(--shadow)}
+.k-group h3{margin:0 0 10px; font-size:15px; font-weight:700; display:flex; align-items:center; gap:8px}
+.k-group h3 .dot{width:10px; height:10px; border-radius:50%; background:var(--c)}
+.k-group .chips{display:flex; flex-wrap:wrap; gap:6px}
+.k-group .chips span{
+  font-size:12px; padding:4px 10px; border-radius:999px;
+  background:var(--bg); color:var(--ink-2); border:1px solid var(--line);
+}
+
+.res-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:14px}
+@media (max-width:680px){ .res-grid{grid-template-columns:1fr} }
+.res-card{background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:16px; box-shadow:var(--shadow)}
+.res-card h4{margin:0 0 10px; font-size:14px; font-weight:700; color:var(--primary)}
+.res-card ul{margin:0; padding:0; list-style:none; font-size:13px}
+.res-card li{padding:5px 0; border-bottom:1px dashed var(--line)}
+.res-card li:last-child{border-bottom:none}
+.res-card li a{color:var(--ink)}
+
+.pitfall-list{display:grid; grid-template-columns:repeat(2,1fr); gap:12px}
+@media (max-width:680px){ .pitfall-list{grid-template-columns:1fr} }
+.pitfall{
+  padding:14px 16px; background:var(--card); border-radius:var(--radius-sm);
+  border:1px solid var(--line); font-size:13.5px; line-height:1.6;
+  display:flex; gap:12px;
+}
+.pitfall .icon{flex-shrink:0; width:28px; height:28px; border-radius:8px; background:#FFF3D6; display:flex; align-items:center; justify-content:center; font-size:15px}
+.pitfall strong{color:var(--ink); display:block; margin-bottom:3px}
+
+footer.foot{padding:36px 0 48px; text-align:center; color:var(--ink-3); font-size:13px; border-top:1px solid var(--line)}
+footer.foot .heart{color:var(--pink)}
+
+/* ===== print ===== */
+@media print{
+  nav.toc,.filter-bar,.chev{display:none}
+  .month{break-inside:avoid}
+  .month[open] > .body{display:block !important}
+  header.hero{padding:20px 0; background:#5B6CFF !important; -webkit-print-color-adjust:exact; print-color-adjust:exact}
+  body{font-size:12px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{transition:none !important; animation:none !important}
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <span class="kicker">Miracle · 12 个月成长路线图 · 知识点细化版</span>
+    <h1>12 个月，48 周，每一周都知道要学什么</h1>
+    <p class="sub">把「季度目标」拆到「每周任务」：每周学哪些知识点、做什么产出、看哪些资源。工作日每晚 1–1.5 小时 + 周末半天，按节奏推进，不熬夜、不裸辞。</p>
+    <div class="stats">
+      <div class="stat"><div class="n">12</div><div class="l">个月 · 4 个季度</div></div>
+      <div class="stat"><div class="n">48</div><div class="l">周 · 每周有产出</div></div>
+      <div class="stat"><div class="n">180+</div><div class="l">个核心知识点</div></div>
+      <div class="stat"><div class="n">4</div><div class="l">个可上线作品</div></div>
+    </div>
+  </div>
+</header>
+
+<nav class="toc" aria-label="季度导航">
+  <div class="wrap inner">
+    <a href="#q-overview">总览</a>
+    <a href="#q1">Q1 爬虫工程化</a>
+    <a href="#q2">Q2 AI 应用落地</a>
+    <a href="#q3">Q3 开源与 IP</a>
+    <a href="#q4">Q4 市场验证</a>
+    <a href="#map">知识全景图</a>
+    <a href="#resources">资源库</a>
+    <a href="#pitfalls">避坑清单</a>
+  </div>
+</nav>
+<div class="progress-bar" aria-hidden="true"><span id="progressFill"></span></div>
+
+<!-- ========== 季度总览 ========== -->
+<section class="quarter-overview wrap" id="q-overview">
+  <h2>四季度 · 四个台阶</h2>
+  <div class="q-grid">
+    <div class="q-card" style="--q-color:#5B6CFF; --q-bg:#EEF0FF">
+      <h3>Q1 · 地基期</h3>
+      <div class="role">月 1 – 3 · 爬虫工程化</div>
+      <div class="proj">🛠️ 信奥题库采集器 v0.1 → v1.0</div>
+      <ul>
+        <li>Python 工程基础</li>
+        <li>静态/异步爬虫 + 合规</li>
+        <li>SQLite 数据管道</li>
+        <li>LLM API 初体验</li>
+      </ul>
+    </div>
+    <div class="q-card" style="--q-color:#FF7AB6; --q-bg:#FFF0F6">
+      <h3>Q2 · 产品期</h3>
+      <div class="role">月 4 – 6 · AI 应用落地</div>
+      <div class="proj">🤖 AI 备课助手 · LLM 错题讲解器</div>
+      <ul>
+        <li>LangChain + RAG</li>
+        <li>向量数据库 + Agent</li>
+        <li>FastAPI 后端</li>
+        <li>Docker + 云端部署</li>
+      </ul>
+    </div>
+    <div class="q-card" style="--q-color:#55C59D; --q-bg:#EAFBF3">
+      <h3>Q3 · 品牌期</h3>
+      <div class="role">月 7 – 9 · 开源与个人 IP</div>
+      <div class="proj">⭐ 开源项目 + 自媒体内容矩阵</div>
+      <ul>
+        <li>GitHub 工程化 + CI/CD</li>
+        <li>Fine-tune + 多模态</li>
+        <li>多 Agent 工作流</li>
+        <li>技术写作 + 短视频</li>
+      </ul>
+    </div>
+    <div class="q-card" style="--q-color:#FFD166; --q-bg:#FFFAEB">
+      <h3>Q4 · 决策期</h3>
+      <div class="role">月 10 – 12 · 市场验证</div>
+      <div class="proj">💼 Offer · 副业 · 下一阶段决策</div>
+      <ul>
+        <li>简历与面试准备</li>
+        <li>算法刷题 30+ 题</li>
+        <li>真实 Offer 谈判</li>
+        <li>副业月入 5K+</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 标签筛选 ========== -->
+<div class="wrap">
+  <div class="filter-bar">
+    <span class="label">按类别筛选知识点：</span>
+    <span class="chip" data-cat="crawler" style="--c:#5B6CFF"><span class="dot"></span>爬虫工程</span>
+    <span class="chip" data-cat="ai" style="--c:#FF7AB6"><span class="dot"></span>AI / LLM</span>
+    <span class="chip" data-cat="eng" style="--c:#55C59D"><span class="dot"></span>工程能力</span>
+    <span class="chip" data-cat="prod" style="--c:#FFD166"><span class="dot"></span>产品 / 部署</span>
+    <span class="chip" data-cat="algo" style="--c:#F97316"><span class="dot"></span>算法基础</span>
+    <span class="chip" data-cat="soft" style="--c:#A78BFA"><span class="dot"></span>软技能 / 求职</span>
+  </div>
+</div>
+
+<!-- ========== 12 个月卡片 ========== -->
+<main class="wrap months">
+
+<!-- ==================== Q1 ==================== -->
+<div class="month" open id="q1" style="--m-color:#5B6CFF; --m-from:#EEF0FF">
+  <header class="m-head">
+    <div class="num">Q1</div>
+    <div class="info">
+      <h3 class="title">月 1–3 · 爬虫工程化地基</h3>
+      <div class="theme">「让采集器从能跑 → 能看 → 能用 → 能讲」</div>
+      <div class="tags">
+        <span style="--t-bg:#EEF0FF; --t-c:#5B6CFF">Python 工程</span>
+        <span style="--t-bg:#EEF0FF; --t-c:#5B6CFF">静态/异步爬虫</span>
+        <span style="--t-bg:#EEF0FF; --t-c:#5B6CFF">SQLite</span>
+        <span style="--t-bg:#EEF0FF; --t-c:#5B6CFF">LLM 入门</span>
+      </div>
+    </div>
+    <div class="chev" aria-hidden="true">▼</div>
+  </header>
+  <div class="body">
+
+    <!-- 月 1 -->
+    <div class="sub-month" role="heading" aria-level="4" style="margin:4px 0 12px; font-size:15px; color:var(--m-color); font-weight:700">月 1 · Python 工程基础 + 静态爬虫</div>
+    <div class="weeks">
+      <div class="week" data-cats="eng,crawler">
+        <div class="w-head"><span class="w-num">W1</span><span class="w-title">环境搭建 + 第一个 API 调用</span></div>
+        <div class="points">
+          <div class="point">VSCode + Python 3.11 + venv 虚拟环境</div>
+          <div class="point">Git 基础：init / add / commit / push</div>
+          <div class="point">GitHub 注册 + 创建第一个 repo</div>
+          <div class="point">requests 库：GET / POST / Headers</div>
+          <div class="point">JSON 解析：json.load / json.dumps</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>用 requests 调通 Codeforces 官方 API，打印前 10 道题的标题和难度。</div>
+        <div class="resources">
+          <a href="https://docs.python.org/zh-cn/3/tutorial/" target="_blank" rel="noopener noreferrer">Python 官方教程</a>
+          <a href="https://docs.github.com/zh/get-started" target="_blank" rel="noopener noreferrer">GitHub 入门指南</a>
+        </div>
+      </div>
+
+      <div class="week" data-cats="crawler">
+        <div class="w-head"><span class="w-num">W2</span><span class="w-title">HTML 解析 + 数据提取</span></div>
+        <div class="points">
+          <div class="point">BeautifulSoup4：find / find_all / select</div>
+          <div class="point">CSS 选择器：.class / #id / 层级 / 属性</div>
+          <div class="point">浏览器 F12 DevTools 分析网页结构</div>
+          <div class="point">提取文本、属性、列表、嵌套结构</div>
+          <div class="point">lxml 解析器（速度对比 html.parser）</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>手动解析一道 CF 题目详情页，提取标题、难度、标签、通过人数。</div>
+        <div class="resources">
+          <a href="https://www.crummy.com/software/BeautifulSoup/bs4/doc/" target="_blank" rel="noopener noreferrer">BeautifulSoup 文档</a>
+          <a href="https://developer.mozilla.org/zh-CN/Learn/CSS" target="_blank" rel="noopener noreferrer">MDN CSS 选择器</a>
+        </div>
+      </div>
+
+      <div class="week" data-cats="crawler,eng">
+        <div class="w-head"><span class="w-num">W3</span><span class="w-title">爬虫进阶 + 异常处理</span></div>
+        <div class="points">
+          <div class="point">Session 复用：requests.Session + Cookie</div>
+          <div class="point">Headers 伪装：User-Agent / Referer / Accept</div>
+          <div class="point">限速策略：time.sleep + 随机抖动</div>
+          <div class="point">异常分级：try/except + requests.exceptions</div>
+          <div class="point">指数退避重试：2s → 4s → 8s</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>跑通之前交付的 oi_collector 项目，理解 Session 复用和重试逻辑。</div>
+        <div class="resources">
+          <a href="https://docs.python-requests.org/zh_CN/latest/" target="_blank" rel="noopener noreferrer">Requests 中文文档</a>
+        </div>
+      </div>
+
+      <div class="week" data-cats="crawler,eng">
+        <div class="w-head"><span class="w-num">W4</span><span class="w-title">数据持久化 · SQLite</span></div>
+        <div class="points">
+          <div class="point">sqlite3 模块：connect / cursor / execute</div>
+          <div class="point">SQL CRUD：INSERT / SELECT / UPDATE / DELETE</div>
+          <div class="point">UPSERT：INSERT OR REPLACE / ON CONFLICT</div>
+          <div class="point">UNIQUE 约束 + 数据去重逻辑</div>
+          <div class="point">DB 工具查看：DB Browser for SQLite</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>把 CF + AtCoder 数据入库，重复采集验证去重正常。</div>
+        <div class="resources">
+          <a href="https://www.sqlite.org/docs.html" target="_blank" rel="noopener noreferrer">SQLite 官方文档</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <input type="checkbox" id="m-m1" data-key="m1">
+      <label for="m-m1">🏁 月 1 里程碑：GitHub 第一次 push，采集器跑通 CF+AtCoder 数据入库
+        <small>验收标准：仓库有 README + 截图；data/oi.db 至少有 30 条数据</small>
+      </label>
+    </div>
+
+    <!-- 月 2 -->
+    <div class="sub-month" role="heading" aria-level="4" style="margin:24px 0 12px; font-size:15px; color:var(--m-color); font-weight:700">月 2 · 工程化改造 + 合规意识</div>
+    <div class="weeks">
+      <div class="week" data-cats="eng">
+        <div class="w-head"><span class="w-num">W5</span><span class="w-title">项目结构 + 设计模式入门</span></div>
+        <div class="points">
+          <div class="point">包与模块：__init__.py / 相对导入</div>
+          <div class="point">抽象基类：abc.ABC + @abstractmethod</div>
+          <div class="point">适配器模式：不同数据源统一接口</div>
+          <div class="point">配置管理：config.py + os.environ</div>
+          <div class="point">类型注解：typing.List / Dict / Optional</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>把采集器重构为多数据源结构（base.py + codeforces.py + atcoder.py）。</div>
+        <div class="resources">
+          <a href="https://docs.python.org/zh-cn/3/tutorial/classes.html" target="_blank" rel="noopener noreferrer">Python 类与继承</a>
+        </div>
+      </div>
+
+      <div class="week" data-cats="eng">
+        <div class="w-head"><span class="w-num">W6</span><span class="w-title">日志 + 调试 + 单测</span></div>
+        <div class="points">
+          <div class="point">logging 模块：DEBUG / INFO / WARNING / ERROR</div>
+          <div class="point">日志输出到文件 + RotatingFileHandler</div>
+          <div class="point">pdb 基础：break / next / step / print</div>
+          <div class="point">VSCode debugger 断点调试</div>
+          <div class="point">pytest 入门：test_*.py / assert / fixture</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>给采集器加 logging，写 3 个单测（clean / storage / fetch）。</div>
+        <div class="resources">
+          <a href="https://docs.pytest.org/" target="_blank" rel="noopener noreferrer">pytest 官方文档</a>
+        </div>
+      </div>
+
+      <div class="week" data-cats="crawler">
+        <div class="w-head"><span class="w-num">W7</span><span class="w-title">合规爬虫 · 红线意识</span></div>
+        <div class="points">
+          <div class="point">robots.txt 解析：urllib.robotparser</div>
+          <div class="point">rate limiting 工程化：令牌桶 / 队列限速</div>
+          <div class="point">User-Agent 规范：留联系方式</div>
+          <div class="point">数据合规：不碰个人信息 / 不绕付费墙</div>
+          <div class="point">反爬识别：403/429/Captcha 处理</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>为采集器加 robots.txt 检查 + 合规日志。</div>
+        <div class="resources">
+          <a href="https://www.robotstxt.org/" target="_blank" rel="noopener noreferrer">robots.txt 标准</a>
+        </div>
+      </div>
+
+      <div class="week" data-cats="crawler,eng">
+        <div class="w-head"><span class="w-num">W8</span><span class="w-title">数据清洗 + 导出</span></div>
+        <div class="points">
+          <div class="point">正则表达式：re.match / search / findall / sub</div>
+          <div class="point">字符串清洗：大小写 / 空白 / 编码</div>
+          <div class="point">pandas 入门：DataFrame / Series / groupby</div>
+          <div class="point">导出：CSV / Excel (openpyxl) / JSON Lines</div>
+          <div class="point">main.py 加 find / export 子命令</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>采集器 v0.2 —— 支持 CSV 导出和按标签/难度筛选。</div>
+        <div class="resources">
+          <a href="https://pandas.pydata.org/docs/" target="_blank" rel="noopener noreferrer">pandas 官方文档</a>
+          <a href="https://regex101.com/" target="_blank" rel="noopener noreferrer">Regex101 正则测试</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <input type="checkbox" id="m-m2" data-key="m2">
+      <label for="m-m2">🏁 月 2 里程碑：采集器 v0.2 完成，支持导出 CSV
+        <small>验收标准：能按 source / difficulty / tag 筛选；能导出 Excel；代码结构清晰</small>
+      </label>
+    </div>
+
+    <!-- 月 3 -->
+    <div class="sub-month" role="heading" aria-level="4" style="margin:24px 0 12px; font-size:15px; color:var(--m-color); font-weight:700">月 3 · 异步 + LLM 初体验</div>
+    <div class="weeks">
+      <div class="week" data-cats="crawler,eng">
+        <div class="w-head"><span class="w-num">W9</span><span class="w-title">异步编程 · asyncio + aiohttp</span></div>
+        <div class="points">
+          <div class="point">asyncio 概念：事件循环 / 协程 / Task</div>
+          <div class="point">async / await 语法</div>
+          <div class="point">aiohttp：ClientSession / GET / POST</div>
+          <div class="point">并发控制：asyncio.Semaphore(3)</div>
+          <div class="point">asyncio.gather 批量任务</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>把 requests 版采集器改成 aiohttp 版，对比采集速度（3x+）。</div>
+        <div class="resources">
+          <a href="https://docs.aiohttp.org/en/stable/" target="_blank" rel="noopener noreferrer">aiohttp 文档</a>
+          <a href="https://docs.python.org/zh-cn/3/library/asyncio.html" target="_blank" rel="noopener noreferrer">asyncio 官方文档</a>
+        </div>
+      </div>
+
+      <div class="week" data-cats="eng">
+        <div class="w-head"><span class="w-num">W10</span><span class="w-title">定时任务 + 自动化</span></div>
+        <div class="points">
+          <div class="point">schedule 库：every().day.at().do()</div>
+          <div class="point">APScheduler：CronTrigger / IntervalTrigger</div>
+          <div class="point">cron 表达式：分 时 日 月 星期</div>
+          <div class="point">后台运行：nohup / systemd / Windows 任务计划</div>
+          <div class="point">日志轮转 + 异常告警（邮件/webhook）</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>每天自动采集新增题目，失败时发告警。</div>
+        <div class="resources">
+          <a href="https://schedule.readthedocs.io/" target="_blank" rel="noopener noreferrer">schedule 文档</a>
+        </div>
+      </div>
+
+      <div class="week" data-cats="ai">
+        <div class="w-head"><span class="w-num">W11</span><span class="w-title">LLM API 调用 + Prompt 入门</span></div>
+        <div class="points">
+          <div class="point">OpenAI API 规范：chat.completions</div>
+          <div class="point">认证：API Key + Authorization Header</div>
+          <div class="point">JSON 结构化输出：response_format=json_object</div>
+          <div class="point">Prompt Engineering：角色 / 任务 / 格式 / 示例</div>
+          <div class="point">DeepSeek / OpenAI / 通义千问 任选其一</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>用 LLM 给入库题目打"算法标签"和"年级建议"，存回 SQLite。</div>
+        <div class="resources">
+          <a href="https://platform.deepseek.com/api-docs/zh-cn/" target="_blank" rel="noopener noreferrer">DeepSeek API 文档</a>
+          <a href="https://www.promptingguide.ai/zh" target="_blank" rel="noopener noreferrer">Prompt Engineering 指南</a>
+        </div>
+      </div>
+
+      <div class="week" data-cats="eng,soft">
+        <div class="w-head"><span class="w-num">W12</span><span class="w-title">项目收尾 + 第一篇技术文章</span></div>
+        <div class="points">
+          <div class="point">代码整理：README / 注释 / 示例命令</div>
+          <div class="point">Git 进阶：tag / release / changelog</div>
+          <div class="point">技术写作结构：痛点 → 方案 → 代码 → 踩坑 → 总结</div>
+          <div class="point">选平台：掘金 / 知乎 / CSDN 任选一</div>
+          <div class="point">配图：draw.io / Excalidraw 画数据流图</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>发布第一篇踩坑文章《我用 Python 做了个信奥题库采集器》。</div>
+        <div class="resources">
+          <a href="https://docs.github.com/zh/repositories/releasing-projects-on-github/managing-releases-in-a-repository" target="_blank" rel="noopener noreferrer">GitHub Release 指南</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <input type="checkbox" id="m-m3" data-key="m3">
+      <label for="m-m3">🏁 月 3 里程碑：采集器 v1.0 + 第一篇文章发布
+        <small>验收标准：异步版 + 定时任务 + LLM 标签；GitHub Release 打 v1.0；文章阅读量 &gt; 100</small>
+      </label>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== Q2 ==================== -->
+<div class="month" id="q2" style="--m-color:#FF7AB6; --m-from:#FFF0F6">
+  <header class="m-head">
+    <div class="num">Q2</div>
+    <div class="info">
+      <h3 class="title">月 4–6 · AI 应用落地 · 把 LLM 变成产品</h3>
+      <div class="theme">「从调 API → 做 RAG → 上 Agent → 部署上线」</div>
+      <div class="tags">
+        <span style="--t-bg:#FFF0F6; --t-c:#FF7AB6">LangChain</span>
+        <span style="--t-bg:#FFF0F6; --t-c:#FF7AB6">RAG</span>
+        <span style="--t-bg:#FFF0F6; --t-c:#FF7AB6">向量库</span>
+        <span style="--t-bg:#FFF0F6; --t-c:#FF7AB6">FastAPI</span>
+        <span style="--t-bg:#FFF0F6; --t-c:#FF7AB6">Docker</span>
+      </div>
+    </div>
+    <div class="chev" aria-hidden="true">▼</div>
+  </header>
+  <div class="body">
+
+    <!-- 月 4 -->
+    <div class="sub-month" role="heading" aria-level="4" style="margin:4px 0 12px; font-size:15px; color:var(--m-color); font-weight:700">月 4 · LLM 应用开发基础</div>
+    <div class="weeks">
+      <div class="week" data-cats="ai">
+        <div class="w-head"><span class="w-num">W13</span><span class="w-title">OpenAI API 进阶</span></div>
+        <div class="points">
+          <div class="point">Chat Completions 多轮对话：messages 数组</div>
+          <div class="point">Function Calling / Tool Use：让模型调用工具</div>
+          <div class="point">Stream 流式输出：SSE 协议 + 打字机效果</div>
+          <div class="point">Token 计费：tiktoken 计算 + 上下文截断</div>
+          <div class="point">Temperature / Top_p 参数调优</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>做一个 CLI 对话机器人，支持多轮 + 流式 + 函数调用。</div>
+        <div class="resources">
+          <a href="https://platform.openai.com/docs/api-reference" target="_blank" rel="noopener noreferrer">OpenAI API Reference</a>
+        </div>
+      </div>
+
+      <div class="week" data-cats="ai">
+        <div class="w-head"><span class="w-num">W14</span><span class="w-title">LangChain 入门</span></div>
+        <div class="points">
+          <div class="point">LLM / ChatModel 抽象：统一接口</div>
+          <div class="point">Chain 组合：SequentialChain / LCEL</div>
+          <div class="point">Memory：BufferMemory / WindowMemory</div>
+          <div class="point">Prompt Template：f-string / Few-shot</div>
+          <div class="point">Output Parser：Pydantic / JSON / 结构化</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>用 LangChain 做一个"教学助手"，带对话记忆。</div>
+        <div class="resources">
+          <a href="https://python.langchain.com/docs/" target="_blank" rel="noopener noreferrer">LangChain 官方文档</a>
+        </div>
+      </div>
+
+      <div class="week" data-cats="ai">
+        <div class="w-head"><span class="w-num">W15</span><span class="w-title">向量数据库 + Embedding</span></div>
+        <div class="points">
+          <div class="point">Embedding 概念：文本 → 向量</div>
+          <div class="point">Chroma DB：零配置本地向量库</div>
+          <div class="point">FAISS：Facebook 高性能向量检索</div>
+          <div class="point">相似度：余弦相似度 / 欧氏距离</div>
+          <div class="point">文档切分：chunk_size / overlap 调参</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>把 oi_collector 题库向量化，能按"动态规划""树形 DP"等语义检索。</div>
+        <div class="resources">
+          <a href="https://docs.trychroma.com/" target="_blank" rel="noopener noreferrer">Chroma 文档</a>
+        </div>
+      </div>
+
+      <div class="week" data-cats="ai">
+        <div class="w-head"><span class="w-num">W16</span><span class="w-title">RAG 基础流程</span></div>
+        <div class="points">
+          <div class="point">Document Loader：TextLoader / PyPDF / CSV</div>
+          <div class="point">Text Splitter：RecursiveCharacterTextSplitter</div>
+          <div class="point">Retriever：from_documents / search_kwargs</div>
+          <div class="point">combine_documents：stuff / map_reduce / refine</div>
+          <div class="point">答案溯源：返回 source 元数据</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>错题讲解助手 MVP —— 输入学生错题代码，输出分步讲解 + 知识点标签。</div>
+        <div class="resources">
+          <a href="https://python.langchain.com/docs/use_cases/question_answering/" target="_blank" rel="noopener noreferrer">LangChain RAG 教程</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <input type="checkbox" id="m-m4" data-key="m4">
+      <label for="m-m4">🏁 月 4 里程碑：错题讲解助手 MVP
+        <small>验收标准：学生粘贴错题代码 → 输出分步讲解 + 错误原因 + 知识点标签</small>
+      </label>
+    </div>
+
+    <!-- 月 5 -->
+    <div class="sub-month" role="heading" aria-level="4" style="margin:24px 0 12px; font-size:15px; color:var(--m-color); font-weight:700">月 5 · RAG 进阶 + Agent</div>
+    <div class="weeks">
+      <div class="week" data-cats="ai">
+        <div class="w-head"><span class="w-num">W17</span><span class="w-title">检索优化</span></div>
+        <div class="points">
+          <div class="point">Reranker 重排序：BGE-Reranker / Cohere</div>
+          <div class="point">混合检索：关键词(BM25) + 向量</div>
+          <div class="point">Metadata filtering：按年级/难度/来源过滤</div>
+          <div class="point">Chunk size 调优实验：对比 200/500/1000</div>
+          <div class="point">评估：Ragas 框架 / 人工评测</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>写一份检索优化对比实验报告（准确率/召回率）。</div>
+      </div>
+
+      <div class="week" data-cats="ai,eng">
+        <div class="w-head"><span class="w-num">W18</span><span class="w-title">多文档 RAG + 答案溯源</span></div>
+        <div class="points">
+          <div class="point">多文档类型：PDF / Word / PPT / Markdown</div>
+          <div class="point">文档元数据管理：source / page / author</div>
+          <div class="point">多路召回：题库 + 教案 + 课件</div>
+          <div class="point">答案溯源：引用原文段落</div>
+          <div class="point">Parent Document Retriever 父文档检索</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>接入教案+题库双源，答案带引用标记。</div>
+      </div>
+
+      <div class="week" data-cats="ai">
+        <div class="w-head"><span class="w-num">W19</span><span class="w-title">Agent 基础</span></div>
+        <div class="points">
+          <div class="point">ReAct 模式：Thought / Action / Observation</div>
+          <div class="point">Tool Calling：让 LLM 调用外部工具</div>
+          <div class="point">LangChain Agent：create_react_agent</div>
+          <div class="point">自定义 Tool：@tool 装饰器</div>
+          <div class="point">多工具协同：查题库 + 讲题 + 搜知识点</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>做一个能查题库+讲题+搜知识点的教学 Agent。</div>
+        <div class="resources">
+          <a href="https://python.langchain.com/docs/modules/agents/" target="_blank" rel="noopener noreferrer">LangChain Agent 文档</a>
+        </div>
+      </div>
+
+      <div class="week" data-cats="eng,prod">
+        <div class="w-head"><span class="w-num">W20</span><span class="w-title">FastAPI 后端入门</span></div>
+        <div class="points">
+          <div class="point">路由与请求方法：@app.get / @app.post</div>
+          <div class="point">Pydantic 数据模型：Request / Response</div>
+          <div class="point">依赖注入：Depends / 数据库连接</div>
+          <div class="point">接口文档：Swagger UI / ReDoc 自动生成</div>
+          <div class="point">异常处理：HTTPException / 统一错误格式</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>AI 备课助手后端 API 完成（/chat / /search / /explain）。</div>
+        <div class="resources">
+          <a href="https://fastapi.tiangolo.com/zh/" target="_blank" rel="noopener noreferrer">FastAPI 中文文档</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <input type="checkbox" id="m-m5" data-key="m5">
+      <label for="m-m5">🏁 月 5 里程碑：AI 备课助手后端 API 完成
+        <small>验收标准：3 个接口可调用；Swagger 文档可访问；Agent 能正确调用 2+ 工具</small>
+      </label>
+    </div>
+
+    <!-- 月 6 -->
+    <div class="sub-month" role="heading" aria-level="4" style="margin:24px 0 12px; font-size:15px; color:var(--m-color); font-weight:700">月 6 · 部署与产品化</div>
+    <div class="weeks">
+      <div class="week" data-cats="prod,eng">
+        <div class="w-head"><span class="w-num">W21</span><span class="w-title">Docker 基础</span></div>
+        <div class="points">
+          <div class="point">镜像与容器：docker run / build / ps</div>
+          <div class="point">Dockerfile：FROM / RUN / COPY / ENTRYPOINT</div>
+          <div class="point">多阶段构建：减小镜像体积</div>
+          <div class="point">docker-compose：多容器编排（API + DB + 前端）</div>
+          <div class="point">镜像推送：Docker Hub / 阿里云 ACR</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>把 AI 备课助手打包成 Docker 镜像，本地 docker-compose 跑通。</div>
+        <div class="resources">
+          <a href="https://docs.docker.com/get-started/" target="_blank" rel="noopener noreferrer">Docker 官方入门</a>
+        </div>
+      </div>
+
+      <div class="week" data-cats="prod">
+        <div class="w-head"><span class="w-num">W22</span><span class="w-title">云端部署实战</span></div>
+        <div class="points">
+          <div class="point">云服务器选购：阿里云/腾讯云轻量（2C4G 够用）</div>
+          <div class="point">Linux 基础：ssh / systemctl / 防火墙</div>
+          <div class="point">Nginx 反向代理 + 静态文件</div>
+          <div class="point">HTTPS：Let's Encrypt + certbot</div>
+          <div class="point">域名解析：A 记录 / CNAME</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>部署上线，外网可访问，HTTPS 绿锁。</div>
+      </div>
+
+      <div class="week" data-cats="prod">
+        <div class="w-head"><span class="w-num">W23</span><span class="w-title">Streamlit / Gradio 快速 UI</span></div>
+        <div class="points">
+          <div class="point">Streamlit 入门：st.title / st.chat_input</div>
+          <div class="point">聊天组件：st.chat_message + session_state</div>
+          <div class="point">Gradio 组件：Interface / Blocks / Chatbot</div>
+          <div class="point">文件上传下载：st.file_uploader</div>
+          <div class="point">Share Link：一键生成公网链接</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>做出可分享的 Web 界面，非技术老师也能用。</div>
+        <div class="resources">
+          <a href="https://docs.streamlit.io/" target="_blank" rel="noopener noreferrer">Streamlit 文档</a>
+          <a href="https://www.gradio.app/docs" target="_blank" rel="noopener noreferrer">Gradio 文档</a>
+        </div>
+      </div>
+
+      <div class="week" data-cats="prod,soft">
+        <div class="w-head"><span class="w-num">W24</span><span class="w-title">产品打磨 + 上线发布</span></div>
+        <div class="points">
+          <div class="point">用户体验：错误提示 / 加载状态 / 空状态</div>
+          <div class="point">性能优化：缓存 / 异步 / 流式输出</div>
+          <div class="point">监控告警：Sentry / 日志 / 用量统计</div>
+          <div class="point">写产品发布文章 + 演示视频</div>
+          <div class="point">发到 V2EX / 掘金 / 知乎</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>AI 备课助手正式上线，发布推广文章，目标阅读 500+。</div>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <input type="checkbox" id="m-m6" data-key="m6">
+      <label for="m-m6">🏁 月 6 里程碑：AI 备课助手上线 + 推广文章发布
+        <small>验收标准：公网可访问；有真实用户（至少 10 人）；文章阅读 500+</small>
+      </label>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== Q3 ==================== -->
+<div class="month" id="q3" style="--m-color:#55C59D; --m-from:#EAFBF3">
+  <header class="m-head">
+    <div class="num">Q3</div>
+    <div class="info">
+      <h3 class="title">月 7–9 · 开源与个人 IP 建设</h3>
+      <div class="theme">「让别人看见你，让作品替你说话」</div>
+      <div class="tags">
+        <span style="--t-bg:#EAFBF3; --t-c:#55C59D">GitHub 进阶</span>
+        <span style="--t-bg:#EAFBF3; --t-c:#55C59D">Fine-tune</span>
+        <span style="--t-bg:#EAFBF3; --t-c:#55C59D">多模态</span>
+        <span style="--t-bg:#EAFBF3; --t-c:#55C59D">自媒体</span>
+      </div>
+    </div>
+    <div class="chev" aria-hidden="true">▼</div>
+  </header>
+  <div class="body">
+
+    <!-- 月 7 -->
+    <div class="sub-month" role="heading" aria-level="4" style="margin:4px 0 12px; font-size:15px; color:var(--m-color); font-weight:700">月 7 · 开源工程能力</div>
+    <div class="weeks">
+      <div class="week" data-cats="eng">
+        <div class="w-head"><span class="w-num">W25</span><span class="w-title">GitHub 进阶 · 协作流程</span></div>
+        <div class="points">
+          <div class="point">PR 工作流：fork / branch / PR / review</div>
+          <div class="point">Issue 管理：bug / feature / good first issue</div>
+          <div class="point">GitHub Actions：CI 自动测试</div>
+          <div class="point">Code Review 礼仪 + 给开源项目提 PR</div>
+          <div class="point">Release Notes 自动化</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>给一个开源项目提交第一个 PR 并被合并。</div>
+        <div class="resources">
+          <a href="https://docs.github.com/zh/pull-requests" target="_blank" rel="noopener noreferrer">GitHub PR 指南</a>
+        </div>
+      </div>
+
+      <div class="week" data-cats="eng">
+        <div class="w-head"><span class="w-num">W26</span><span class="w-title">测试 + 类型 + 质量</span></div>
+        <div class="points">
+          <div class="point">pytest 进阶：fixture / parametrize / mark</div>
+          <div class="point">覆盖率：pytest-cov + 目标 60%+</div>
+          <div class="point">类型注解：mypy 静态检查</div>
+          <div class="point">pre-commit hooks：black / isort / flake8</div>
+          <div class="point">代码质量门禁：CI 跑通才允许合并</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>给 AI 备课助手项目加测试覆盖率到 60%+。</div>
+      </div>
+
+      <div class="week" data-cats="eng,soft">
+        <div class="w-head"><span class="w-num">W27</span><span class="w-title">文档 + 开源协议 + 社区</span></div>
+        <div class="points">
+          <div class="point">README 写作：badges / 截图 / 快速开始 / 示例</div>
+          <div class="point">MkDocs / Sphinx：自动生成文档站</div>
+          <div class="point">开源协议选择：MIT / Apache-2.0 / GPL</div>
+          <div class="point">CONTRIBUTING.md + CODE_OF_CONDUCT.md</div>
+          <div class="point">Issue Template / PR Template</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>发布第一个有完整文档的开源项目。</div>
+      </div>
+
+      <div class="week" data-cats="eng,prod">
+        <div class="w-head"><span class="w-num">W28</span><span class="w-title">第二个开源项目 + PyPI</span></div>
+        <div class="points">
+          <div class="point">项目策划：命名 / 定位 / 一句话描述</div>
+          <div class="point">快速脚手架：cookiecutter / poetry</div>
+          <div class="point">核心功能实现（MVP）</div>
+          <div class="point">发布到 PyPI：twine upload</div>
+          <div class="point">README + 安装命令 pip install xxx</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>在 PyPI 发布一个教学相关的小工具包。</div>
+        <div class="resources">
+          <a href="https://packaging.python.org/tutorials/packaging-projects/" target="_blank" rel="noopener noreferrer">PyPI 打包教程</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <input type="checkbox" id="m-m7" data-key="m7">
+      <label for="m-m7">🏁 月 7 里程碑：第一个开源项目获得 10+ Star
+        <small>验收标准：GitHub 上有真实 Star / Issue / 文档完整；PyPI 项目可安装</small>
+      </label>
+    </div>
+
+    <!-- 月 8 -->
+    <div class="sub-month" role="heading" aria-level="4" style="margin:24px 0 12px; font-size:15px; color:var(--m-color); font-weight:700">月 8 · AI 工程进阶</div>
+    <div class="weeks">
+      <div class="week" data-cats="ai">
+        <div class="w-head"><span class="w-num">W29</span><span class="w-title">Fine-tuning 基础</span></div>
+        <div class="points">
+          <div class="point">数据集准备：JSONL / Alpaca 格式</div>
+          <div class="point">LoRA 原理：低秩适配 / PEFT</div>
+          <div class="point">Hugging Face Transformers + Datasets</div>
+          <div class="point">训练环境：Colab / AutoDL / 本地</div>
+          <div class="point">评估：loss / BLEU / 人工评测</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>用教育领域数据 Fine-tune 一个小模型（Qwen-1.8B）。</div>
+        <div class="resources">
+          <a href="https://huggingface.co/docs/transformers/" target="_blank" rel="noopener noreferrer">Transformers 文档</a>
+        </div>
+      </div>
+
+      <div class="week" data-cats="ai">
+        <div class="w-head"><span class="w-num">W30</span><span class="w-title">多模态 AI</span></div>
+        <div class="points">
+          <div class="point">Vision API：GPT-4V / Qwen-VL / 通义</div>
+          <div class="point">OCR 应用：学生手写代码识别</div>
+          <div class="point">Whisper 语音：学生口述题转文字</div>
+          <div class="point">多模态 RAG：图+文混合检索</div>
+          <div class="point">应用：拍照识题 → 自动讲解</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>做一个"拍照识题 + 讲解"的小工具。</div>
+      </div>
+
+      <div class="week" data-cats="ai">
+        <div class="w-head"><span class="w-num">W31</span><span class="w-title">多 Agent 工作流</span></div>
+        <div class="points">
+          <div class="point">LangGraph：状态图 + 节点流转</div>
+          <div class="point">CrewAI：角色 / 任务 / 协作</div>
+          <div class="point">AutoGen：多 Agent 对话</div>
+          <div class="point">工作流编排：出题→批改→讲解→反馈</div>
+          <div class="point">错误处理：重试 / 降级 / 人工兜底</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>做一个"出题-批改-讲解"多 Agent 教学流程。</div>
+      </div>
+
+      <div class="week" data-cats="ai,prod">
+        <div class="w-head"><span class="w-num">W32</span><span class="w-title">低代码 AI 平台</span></div>
+        <div class="points">
+          <div class="point">Dify 实战：工作流节点 + RAG + Agent</div>
+          <div class="point">Coze Bot：扣子平台搭建应用</div>
+          <div class="point">工作流节点设计：条件 / 循环 / 分支</div>
+          <div class="point">快速原型：1 天做出可演示 Demo</div>
+          <div class="point">对比：低代码 vs 自研的取舍</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>用 Dify/Coze 快速复刻教学工具 Demo。</div>
+        <div class="resources">
+          <a href="https://docs.dify.ai/zh-hans" target="_blank" rel="noopener noreferrer">Dify 中文文档</a>
+          <a href="https://www.coze.cn/docs" target="_blank" rel="noopener noreferrer">Coze 官方文档</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <input type="checkbox" id="m-m8" data-key="m8">
+      <label for="m-m8">🏁 月 8 里程碑：发布多模态教学工具 + 多 Agent 流程
+        <small>验收标准：拍照识题工具可演示；多 Agent 流程跑通；Dify/Coze Demo 上线</small>
+      </label>
+    </div>
+
+    <!-- 月 9 -->
+    <div class="sub-month" role="heading" aria-level="4" style="margin:24px 0 12px; font-size:15px; color:var(--m-color); font-weight:700">月 9 · 自媒体 + 作品集</div>
+    <div class="weeks">
+      <div class="week" data-cats="soft">
+        <div class="w-head"><span class="w-num">W33</span><span class="w-title">技术写作进阶</span></div>
+        <div class="points">
+          <div class="point">Markdown 进阶：表格 / 代码块 / 公式 / 流程图</div>
+          <div class="point">文章结构：钩子 → 痛点 → 方案 → 代码 → 总结</div>
+          <div class="point">SEO 基础：标题 / 关键词 / 摘要</div>
+          <div class="point">掘金 / 知乎 / CSDN 运营策略</div>
+          <div class="point">系列文章规划：连载增加粘性</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>发布 3 篇深度技术文章（RAG / Agent / 部署）。</div>
+      </div>
+
+      <div class="week" data-cats="soft">
+        <div class="w-head"><span class="w-num">W34</span><span class="w-title">短视频制作</span></div>
+        <div class="points">
+          <div class="point">录屏工具：OBS Studio</div>
+          <div class="point">剪辑基础：剪映 / CapCut</div>
+          <div class="point">脚本设计：3 分钟讲一个点</div>
+          <div class="point">字幕 + BGM + 转场</div>
+          <div class="point">选题：教学场景里的技术痛点</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>发布 3 个技术短视频（B站 + 抖音 + 小红书）。</div>
+      </div>
+
+      <div class="week" data-cats="soft">
+        <div class="w-head"><span class="w-num">W35</span><span class="w-title">多平台内容分发</span></div>
+        <div class="points">
+          <div class="point">B站定位：长视频教程 + 技术分享</div>
+          <div class="point">小红书：短图文 + 学习打卡</div>
+          <div class="point">公众号：深度文章 + 课程推广</div>
+          <div class="point">封面与标题设计：Canva / 即创</div>
+          <div class="point">引流策略：主页 → 微信 → 付费</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>建立 3 个平台的创作者账号，粉丝破 500。</div>
+      </div>
+
+      <div class="week" data-cats="eng,prod">
+        <div class="w-head"><span class="w-num">W36</span><span class="w-title">个人作品集网站</span></div>
+        <div class="points">
+          <div class="point">GitHub Pages / Vercel / Netlify 免费托管</div>
+          <div class="point">个人域名注册与解析</div>
+          <div class="point">作品集页面：项目 / 文章 / 视频 / 联系方式</div>
+          <div class="point">SEO + 社交分享卡片</div>
+          <div class="point">Hugo / VitePress 静态站点生成</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>个人作品集网站上线，绑定自定义域名。</div>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <input type="checkbox" id="m-m9" data-key="m9">
+      <label for="m-m9">🏁 月 9 里程碑：自媒体账号 + 作品集网站
+        <small>验收标准：3 个平台粉丝 500+；10+ 篇技术文章；5+ 个短视频；作品集网站上线</small>
+      </label>
+    </div>
+
+  </div>
+</div>
+
+<!-- ==================== Q4 ==================== -->
+<div class="month" id="q4" style="--m-color:#FFD166; --m-from:#FFFAEB">
+  <header class="m-head">
+    <div class="num">Q4</div>
+    <div class="info">
+      <h3 class="title">月 10–12 · 市场验证 · Offer 决策</h3>
+      <div class="theme">「用真实市场反馈，决定下一阶段」</div>
+      <div class="tags">
+        <span style="--t-bg:#FFFAEB; --t-c:#B8860B">简历面试</span>
+        <span style="--t-bg:#FFFAEB; --t-c:#B8860B">算法刷题</span>
+        <span style="--t-bg:#FFFAEB; --t-c:#B8860B">Offer 谈判</span>
+        <span style="--t-bg:#FFFAEB; --t-c:#B8860B">副业变现</span>
+      </div>
+    </div>
+    <div class="chev" aria-hidden="true">▼</div>
+  </header>
+  <div class="body">
+
+    <!-- 月 10 -->
+    <div class="sub-month" role="heading" aria-level="4" style="margin:4px 0 12px; font-size:15px; color:var(--m-color); font-weight:700">月 10 · 求职准备</div>
+    <div class="weeks">
+      <div class="week" data-cats="soft">
+        <div class="w-head"><span class="w-num">W37</span><span class="w-title">简历制作</span></div>
+        <div class="points">
+          <div class="point">STAR 法则：情境 / 任务 / 行动 / 结果</div>
+          <div class="point">项目包装：业务价值 / 技术栈 / 量化成果</div>
+          <div class="point">A/B 版本：教研岗 / 技术岗 两份</div>
+          <div class="point">LinkedIn / Boss直聘 / 拉勾 优化</div>
+          <div class="point">作品集链接：GitHub + 作品集网站</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>完成两份简历（教研+技术），找 3 位朋友反馈迭代。</div>
+      </div>
+
+      <div class="week" data-cats="soft,algo">
+        <div class="w-head"><span class="w-num">W38</span><span class="w-title">面试技术准备</span></div>
+        <div class="points">
+          <div class="point">Python 八股：GIL / 装饰器 / 生成器 / 内存管理</div>
+          <div class="point">爬虫专项：Scrapy / Redis / 反爬 / 分布式</div>
+          <div class="point">LLM 应用：RAG / Prompt / Agent / 向量库</div>
+          <div class="point">系统设计：短链 / 爬虫系统 / RAG 架构</div>
+          <div class="point">数据库：MySQL / Redis / MongoDB 选型</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>整理 50+ 道高频面试题 + 自己的答案版本。</div>
+      </div>
+
+      <div class="week" data-cats="algo">
+        <div class="w-head"><span class="w-num">W39</span><span class="w-title">算法刷题启动</span></div>
+        <div class="points">
+          <div class="point">LeetCode 热题 100 列表</div>
+          <div class="point">每天 1 题：先 Easy 再 Medium</div>
+          <div class="point">重点专题：数组 / 字符串 / 树 / 动态规划</div>
+          <div class="point">配合教学场景：能给学生讲出来</div>
+          <div class="point">题解输出：写 LeetCode 题解（自媒体素材）</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>完成 30+ 题，写 5 篇题解文章。</div>
+        <div class="resources">
+          <a href="https://leetcode.cn/studyplan/top-100-liked/" target="_blank" rel="noopener noreferrer">LeetCode 热题 100</a>
+        </div>
+      </div>
+
+      <div class="week" data-cats="soft">
+        <div class="w-head"><span class="w-num">W40</span><span class="w-title">投递 + 模拟面试</span></div>
+        <div class="points">
+          <div class="point">投递 20+ 岗位（Boss / 拉勾 / LinkedIn / 内推）</div>
+          <div class="point">内推渠道：脉脉 / LinkedIn / 校友</div>
+          <div class="point">模拟面试：找朋友 / 录音复盘</div>
+          <div class="point">自我介绍：3 分钟版本打磨</div>
+          <div class="point">反问环节：准备 5 个好问题</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>投递 20+ 岗位，完成 3+ 次真实/模拟面试。</div>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <input type="checkbox" id="m-m10" data-key="m10">
+      <label for="m-m10">🏁 月 10 里程碑：投递 20+ · 完成 3+ 场面试
+        <small>验收标准：简历定稿；题库 50+；LeetCode 30+；拿到至少 1 次真实面试反馈</small>
+      </label>
+    </div>
+
+    <!-- 月 11 -->
+    <div class="sub-month" role="heading" aria-level="4" style="margin:24px 0 12px; font-size:15px; color:var(--m-color); font-weight:700">月 11 · 面试迭代 + 副业变现</div>
+    <div class="weeks">
+      <div class="week" data-cats="soft">
+        <div class="w-head"><span class="w-num">W41</span><span class="w-title">面试复盘 + 查缺补漏</span></div>
+        <div class="points">
+          <div class="point">每场面试后立即记录问题</div>
+          <div class="point">分类：答错 / 不熟 / 表达不清</div>
+          <div class="point">针对性补强：回看文档 / 写 Demo</div>
+          <div class="point">调整简历与表达策略</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>面试复盘文档，记录所有被问到的问题。</div>
+      </div>
+
+      <div class="week" data-cats="soft">
+        <div class="w-head"><span class="w-num">W42</span><span class="w-title">持续面试 + Offer 雏形</span></div>
+        <div class="points">
+          <div class="point">继续投递 + 二轮面试</div>
+          <div class="point">技术面 / HR 面 / 业务面 不同准备</div>
+          <div class="point">谈薪技巧：市场价 / 底线 / 期权</div>
+          <div class="point">Offer 比较维度：薪资 / 成长 / 团队 / 方向</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>进入 Offer 池，至少 1 个明确意向。</div>
+      </div>
+
+      <div class="week" data-cats="soft,prod">
+        <div class="w-head"><span class="w-num">W43</span><span class="w-title">副业变现启动</span></div>
+        <div class="points">
+          <div class="point">接单渠道：程序员客栈 / 猪八戒 / 闲鱼</div>
+          <div class="point">接单方向：爬虫 / 数据处理 / LLM 应用</div>
+          <div class="point">定价策略：按小时 / 按项目 / 按效果</div>
+          <div class="point">合同与收款：保护自己</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>接到第一单副业，金额不限。</div>
+      </div>
+
+      <div class="week" data-cats="soft,prod">
+        <div class="w-head"><span class="w-num">W44</span><span class="w-title">副业规模化</span></div>
+        <div class="points">
+          <div class="point">课程售卖：录播课 / 1对1辅导</div>
+          <div class="point">知识付费：小册 / 专栏 / 训练营</div>
+          <div class="point">复购：学员反馈 → 案例 → 新学员</div>
+          <div class="point">时间管理：工作 + 副业 + 生活平衡</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>副业月入 3K+，验证副业模型可复制。</div>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <input type="checkbox" id="m-m11" data-key="m11">
+      <label for="m-m11">🏁 月 11 里程碑：2+ Offer 或副业月入 5K+
+        <small>验收标准：拿到 2+ 个真实 Offer 或副业累计收入 5K+；有明确谈判筹码</small>
+      </label>
+    </div>
+
+    <!-- 月 12 -->
+    <div class="sub-month" role="heading" aria-level="4" style="margin:24px 0 12px; font-size:15px; color:var(--m-color); font-weight:700">月 12 · 决策与转型</div>
+    <div class="weeks">
+      <div class="week" data-cats="soft">
+        <div class="w-head"><span class="w-num">W45</span><span class="w-title">Offer 比较与决策</span></div>
+        <div class="points">
+          <div class="point">Offer 对比表：薪资 / 成长 / 团队 / 方向 / 工作强度</div>
+          <div class="point">与原岗位对比：短期收益 vs 长期价值</div>
+          <div class="point">长期发展评估：3 年后在哪</div>
+          <div class="point">和家人 / 朋友 / 导师讨论</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>做出最终决策，写一份"决策备忘录"。</div>
+      </div>
+
+      <div class="week" data-cats="soft">
+        <div class="w-head"><span class="w-num">W46</span><span class="w-title">离职 / 过渡准备</span></div>
+        <div class="points">
+          <div class="point">离职交接：至少提前 1 个月告知</div>
+          <div class="point">文档沉淀：把教学工作流程化</div>
+          <div class="point">人脉维护：和同事 / 学生家长保持联系</div>
+          <div class="point">心理建设：从老师到技术人的心态转换</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>完成离职交接（或决定保留现职+副业模式）。</div>
+      </div>
+
+      <div class="week" data-cats="soft">
+        <div class="w-head"><span class="w-num">W47</span><span class="w-title">新岗位 / 新起点准备</span></div>
+        <div class="points">
+          <div class="point">新岗位预习：技术栈 / 业务 / 团队</div>
+          <div class="point">工具准备：开发环境 / 账号 / 文档</div>
+          <div class="point">30/60/90 天计划草案</div>
+          <div class="point">人脉建立：提前联系未来同事</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>新岗位入职准备清单完成。</div>
+      </div>
+
+      <div class="week" data-cats="soft">
+        <div class="w-head"><span class="w-num">W48</span><span class="w-title">下一年规划启动</span></div>
+        <div class="points">
+          <div class="point">12 个月复盘：哪些做到了，哪些没做到</div>
+          <div class="point">沉淀方法论：可复用的经验文档</div>
+          <div class="point">下一年目标设定（基于真实数据）</div>
+          <div class="point">或：副业规模化，考虑创业</div>
+        </div>
+        <div class="output"><strong>小产出：</strong>完成年度复盘，启动第二年规划。</div>
+      </div>
+    </div>
+
+    <div class="milestone">
+      <input type="checkbox" id="m-m12" data-key="m12">
+      <label for="m-m12">🏁 月 12 里程碑：进入下一阶段
+        <small>验收标准：新岗位入职 / 工作室成立 / 副业规模化，三条路任选其一已落地</small>
+      </label>
+    </div>
+
+  </div>
+</div>
+
+</main>
+
+<!-- ========== 知识全景图 ========== -->
+<section class="knowledge-map wrap" id="map">
+  <h2>📚 知识点全景图 · 按类别分组</h2>
+  <div class="k-groups">
+    <div class="k-group" style="--c:#5B6CFF">
+      <h3><span class="dot"></span>爬虫工程</h3>
+      <div class="chips">
+        <span>requests</span><span>BeautifulSoup</span><span>CSS 选择器</span>
+        <span>Session 复用</span><span>Headers 伪装</span><span>限速策略</span>
+        <span>指数退避</span><span>robots.txt</span><span>反爬识别</span>
+        <span>正则表达式</span><span>aiohttp</span><span>asyncio</span>
+        <span>Semaphore</span><span>Playwright(选)</span>
+      </div>
+    </div>
+    <div class="k-group" style="--c:#FF7AB6">
+      <h3><span class="dot"></span>AI / LLM</h3>
+      <div class="chips">
+        <span>OpenAI API</span><span>Function Calling</span><span>Stream 流式</span>
+        <span>Prompt Engineering</span><span>LangChain</span><span>Chain / Memory</span>
+        <span>Embedding</span><span>Chroma / FAISS</span><span>RAG 流程</span>
+        <span>Reranker</span><span>混合检索</span><span>Agent / ReAct</span>
+        <span>Fine-tune / LoRA</span><span>Vision API</span><span>Whisper</span>
+        <span>LangGraph</span><span>CrewAI</span><span>Dify / Coze</span>
+      </div>
+    </div>
+    <div class="k-group" style="--c:#55C59D">
+      <h3><span class="dot"></span>工程能力</h3>
+      <div class="chips">
+        <span>Git / GitHub</span><span>venv</span><span>包与模块</span>
+        <span>抽象基类</span><span>适配器模式</span><span>类型注解</span>
+        <span>logging</span><span>pytest</span><span>覆盖率</span>
+        <span>pre-commit</span><span>mypy</span><span>GitHub Actions</span>
+        <span>PR 工作流</span><span>MkDocs</span>
+      </div>
+    </div>
+    <div class="k-group" style="--c:#FFD166">
+      <h3><span class="dot"></span>产品 / 部署</h3>
+      <div class="chips">
+        <span>SQLite</span><span>pandas</span><span>FastAPI</span>
+        <span>Pydantic</span><span>Docker</span><span>docker-compose</span>
+        <span>Nginx</span><span>HTTPS</span><span>域名</span>
+        <span>Streamlit</span><span>Gradio</span><span>PyPI 发布</span>
+        <span>GitHub Pages</span><span>Vercel</span><span>Hugo / VitePress</span>
+      </div>
+    </div>
+    <div class="k-group" style="--c:#F97316">
+      <h3><span class="dot"></span>算法基础</h3>
+      <div class="chips">
+        <span>LeetCode 热题 100</span><span>数组 / 字符串</span>
+        <span>树 / 图</span><span>动态规划</span><span>贪心</span>
+        <span>回溯</span><span>二分查找</span><span>双指针</span>
+        <span>滑动窗口</span><span>单调栈</span>
+      </div>
+    </div>
+    <div class="k-group" style="--c:#A78BFA">
+      <h3><span class="dot"></span>软技能 / 求职</h3>
+      <div class="chips">
+        <span>简历 STAR</span><span>面试八股</span><span>系统设计</span>
+        <span>谈薪技巧</span><span>Offer 比较</span><span>内推渠道</span>
+        <span>技术写作</span><span>短视频制作</span><span>自媒体运营</span>
+        <span>副业接单</span><span>知识付费</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 资源库 ========== -->
+<section class="resources wrap" id="resources">
+  <h2>🔗 推荐资源库</h2>
+  <div class="res-grid">
+    <div class="res-card">
+      <div style="margin:0 0 10px; font-size:14px; font-weight:700; color:var(--primary)">Python 基础与进阶</div>
+      <ul>
+        <li><a href="https://docs.python.org/zh-cn/3/tutorial/" target="_blank" rel="noopener noreferrer">Python 官方中文教程</a></li>
+        <li><a href="https://python-patterns.guide/" target="_blank" rel="noopener noreferrer">Python Design Patterns</a></li>
+        <li><a href="https://fluentpython.com/" target="_blank" rel="noopener noreferrer">《流畅的 Python》</a></li>
+        <li><a href="https://realpython.com/" target="_blank" rel="noopener noreferrer">Real Python 教程库</a></li>
+      </ul>
+    </div>
+    <div class="res-card">
+      <div style="margin:0 0 10px; font-size:14px; font-weight:700; color:var(--primary)">爬虫专项</div>
+      <ul>
+        <li><a href="https://docs.scrapy.org/en/latest/" target="_blank" rel="noopener noreferrer">Scrapy 官方文档</a></li>
+        <li><a href="https://playwright.dev/python/" target="_blank" rel="noopener noreferrer">Playwright for Python</a></li>
+        <li><a href="https://github.com/PyQt5/PyQt" target="_blank" rel="noopener noreferrer">反爬实战案例集</a></li>
+      </ul>
+    </div>
+    <div class="res-card">
+      <div style="margin:0 0 10px; font-size:14px; font-weight:700; color:var(--primary)">LLM / RAG / Agent</div>
+      <ul>
+        <li><a href="https://python.langchain.com/docs/" target="_blank" rel="noopener noreferrer">LangChain 文档</a></li>
+        <li><a href="https://www.promptingguide.ai/zh" target="_blank" rel="noopener noreferrer">Prompt Engineering 指南</a></li>
+        <li><a href="https://huggingface.co/docs/transformers/" target="_blank" rel="noopener noreferrer">Hugging Face Transformers</a></li>
+        <li><a href="https://docs.dify.ai/zh-hans" target="_blank" rel="noopener noreferrer">Dify 中文文档</a></li>
+        <li><a href="https://www.coze.cn/docs" target="_blank" rel="noopener noreferrer">Coze 官方文档</a></li>
+      </ul>
+    </div>
+    <div class="res-card">
+      <div style="margin:0 0 10px; font-size:14px; font-weight:700; color:var(--primary)">工程化与部署</div>
+      <ul>
+        <li><a href="https://docs.docker.com/get-started/" target="_blank" rel="noopener noreferrer">Docker 官方入门</a></li>
+        <li><a href="https://fastapi.tiangolo.com/zh/" target="_blank" rel="noopener noreferrer">FastAPI 中文文档</a></li>
+        <li><a href="https://docs.streamlit.io/" target="_blank" rel="noopener noreferrer">Streamlit 文档</a></li>
+        <li><a href="https://docs.github.com/zh/actions" target="_blank" rel="noopener noreferrer">GitHub Actions 文档</a></li>
+      </ul>
+    </div>
+    <div class="res-card">
+      <div style="margin:0 0 10px; font-size:14px; font-weight:700; color:var(--primary)">算法刷题</div>
+      <ul>
+        <li><a href="https://leetcode.cn/studyplan/top-100-liked/" target="_blank" rel="noopener noreferrer">LeetCode 热题 100</a></li>
+        <li><a href="https://github.com/youngyangyang04/leetcode-master" target="_blank" rel="noopener noreferrer">代码随想录（体系化刷题）</a></li>
+        <li><a href="https://labuladong.online/algo/" target="_blank" rel="noopener noreferrer">labuladong 的算法笔记</a></li>
+      </ul>
+    </div>
+    <div class="res-card">
+      <div style="margin:0 0 10px; font-size:14px; font-weight:700; color:var(--primary)">自媒体与作品集</div>
+      <ul>
+        <li><a href="https://www.runoob.com/markdown/" target="_blank" rel="noopener noreferrer">Markdown 教程</a></li>
+        <li><a href="https://www.canva.cn/" target="_blank" rel="noopener noreferrer">Canva 封面设计</a></li>
+        <li><a href="https://gohugo.io/" target="_blank" rel="noopener noreferrer">Hugo 静态网站</a></li>
+        <li><a href="https://vitepress.dev/" target="_blank" rel="noopener noreferrer">VitePress 文档站</a></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ========== 避坑清单 ========== -->
+<section class="pitfalls wrap" id="pitfalls">
+  <h2>⚠️ 12 个月最容易踩的 8 个坑</h2>
+  <div class="pitfall-list">
+    <div class="pitfall">
+      <div class="icon">🚫</div>
+      <div><strong>裸辞 All in 学习</strong>稳定收入是你最大的安全垫。每周 10-12 小时 + 不熬夜，足够跑完全程。</div>
+    </div>
+    <div class="pitfall">
+      <div class="icon">🚫</div>
+      <div><strong>囤课式学习</strong>看完 ≠ 学会。每学一个知识点，必须对应一个可运行的产出，否则就是浪费时间。</div>
+    </div>
+    <div class="pitfall">
+      <div class="icon">🚫</div>
+      <div><strong>追新框架不落地</strong>每周都有新 AI 框架。抓核心（RAG/Agent/Prompt），其他的按需学。</div>
+    </div>
+    <div class="pitfall">
+      <div class="icon">🚫</div>
+      <div><strong>代码不上传 GitHub</strong>没 push 的代码 = 没做过。每周至少一次 commit，每季度一次 release。</div>
+    </div>
+    <div class="pitfall">
+      <div class="icon">🚫</div>
+      <div><strong>只学不输出</strong>技术写作和短视频不是"加分项"，是"必选项"。别人看不见 = 不存在。</div>
+    </div>
+    <div class="pitfall">
+      <div class="icon">🚫</div>
+      <div><strong>爬虫踩法律红线</strong>碰个人信息 / 绕付费墙 / 高频压垮服务器，都可能被告。限速 ≥2s/次 + 只采公开数据。</div>
+    </div>
+    <div class="pitfall">
+      <div class="icon">🚫</div>
+      <div><strong>Q4 才开始找工作</strong>简历 Q3 就要开始写，面试准备和算法刷题从 Q3 末启动，Q4 是收割期不是准备期。</div>
+    </div>
+    <div class="pitfall">
+      <div class="icon">🚫</div>
+      <div><strong>忽视教学经验</strong>5 年教学经验是独特资产。转行不是"从零开始"，是"叠加升级"。面试时这是加分项。</div>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap">
+    Made with <span class="heart">♥</span> for Miracle · 12 个月知识点细化手册 v1.0 · 2026-09-03
+  </div>
+</footer>
+
+<script>
+(function(){
+  // ===== 折叠展开 =====
+  document.querySelectorAll('.month').forEach(m=>{
+    const head = m.querySelector('header.m-head');
+    const body = m.querySelector('.body');
+    if(!body) return;
+    // 初始折叠状态（仅 Q1 默认展开）
+    if(!m.hasAttribute('open')){ body.style.display='none'; }
+    head.addEventListener('click',()=>{
+      const isOpen = m.hasAttribute('open');
+      if(isOpen){ body.style.display='none'; m.removeAttribute('open'); }
+      else{ body.style.display='block'; m.setAttribute('open',''); }
+    });
+    head.addEventListener('keydown',e=>{
+      if(e.key==='Enter'||e.key===' '){ e.preventDefault(); head.click(); }
+    });
+    head.setAttribute('tabindex','0');
+    head.setAttribute('role','button');
+  });
+
+  // ===== Sticky nav 高亮 =====
+  const navLinks = document.querySelectorAll('nav.toc a');
+  const sections = [];
+  navLinks.forEach(a=>{
+    const id = a.getAttribute('href').slice(1);
+    const el = document.getElementById(id);
+    if(el) sections.push({a, el});
+  });
+  const onScroll = ()=>{
+    const y = window.scrollY + 120;
+    let current = sections[0];
+    for(const s of sections){ if(s.el.offsetTop <= y) current = s; }
+    navLinks.forEach(a=>a.classList.remove('active'));
+    if(current) current.a.classList.add('active');
+  };
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  // ===== 页内导航平滑滚动 =====
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{
+    a.addEventListener('click',e=>{
+      const id = a.getAttribute('href').slice(1);
+      const target = document.getElementById(id);
+      if(target){
+        e.preventDefault();
+        // 若目标是月份卡片且折叠，先展开
+        if(target.classList.contains('month') && !target.hasAttribute('open')){
+          target.click();
+        }
+        target.scrollIntoView({behavior:'smooth', block:'start'});
+      }
+    });
+  });
+
+  // ===== 标签筛选 =====
+  const chips = document.querySelectorAll('.filter-bar .chip');
+  const weeks = document.querySelectorAll('.week');
+  chips.forEach(chip=>{
+    chip.addEventListener('click',()=>{
+      const cat = chip.dataset.cat;
+      const isActive = chip.classList.contains('active');
+      // 切换当前 chip
+      if(isActive){
+        chip.classList.remove('active');
+        // 如果没有任何 active，显示全部
+        if(!document.querySelector('.filter-bar .chip.active')){
+          weeks.forEach(w=>w.classList.remove('hidden-by-filter'));
+        } else {
+          applyFilter();
+        }
+      } else {
+        chip.classList.add('active');
+        applyFilter();
+      }
+    });
+  });
+  function applyFilter(){
+    const activeCats = Array.from(document.querySelectorAll('.filter-bar .chip.active')).map(c=>c.dataset.cat);
+    weeks.forEach(w=>{
+      const cats = (w.dataset.cats||'').split(',');
+      const match = activeCats.some(c=>cats.includes(c));
+      w.classList.toggle('hidden-by-filter', !match);
+    });
+    // 展开所有月份，否则看不见筛选结果
+    document.querySelectorAll('.month').forEach(m=>{
+      if(!m.hasAttribute('open')) m.click();
+    });
+  }
+
+  // ===== 里程碑 localStorage =====
+  const STORAGE_KEY = 'miracle_knowledge_v1';
+  let data = {};
+  try{ data = JSON.parse(localStorage.getItem(STORAGE_KEY)||'{}'); }catch(e){ data = {}; }
+  const checkboxes = document.querySelectorAll('.milestone input[type=checkbox]');
+  checkboxes.forEach(cb=>{
+    const key = cb.dataset.key;
+    if(data[key]) cb.checked = true;
+    cb.addEventListener('change',()=>{
+      data[key] = cb.checked;
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      updateProgress();
+    });
+  });
+  function updateProgress(){
+    const total = checkboxes.length;
+    const done = Array.from(checkboxes).filter(c=>c.checked).length;
+    const pct = total ? (done/total*100) : 0;
+    document.getElementById('progressFill').style.width = pct + '%';
+  }
+  updateProgress();
+})();
+</script>
+</body>
+</html>
