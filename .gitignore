@@ -1,0 +1,18 @@
+# 虚拟环境
+venv/
+.venv/
+myenv/
+spider_ai/
+
+# python缓存
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# 环境变量、密钥
+.env
+*.log
+
+# vscode配置
+.vscode/
