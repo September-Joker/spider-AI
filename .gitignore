@@ -16,3 +16,4 @@ __pycache__/
 
 # vscode配置
 .vscode/
+.vscode
